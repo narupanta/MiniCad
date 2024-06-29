@@ -163,7 +163,7 @@ class TranslateShapeDialog(QDialog):
     def __init__(self, numberOfShapes: int, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self.shapeNumber = QSpinBox(self)
-        self.shapeNumber.setMaximum(numberOfShapes - 1)
+        # self.shapeNumber.setMaximum(numberOfShapes - 1)
         self.shapeNumber.setMinimum(0)
 
         max_value = 1000
@@ -206,6 +206,45 @@ def translate(shapes: list[Shape], command_stack: CommandStack) -> None:
 
 
 # TODO: Task 4 - Implement the ScaleShapeDialog class and the scale function
+class ScaleShapeDialog(QDialog):
+
+    def __init__(self, numberOfShapes: int, parent: Optional[QWidget] = None) -> None:
+        super().__init__(parent)
+        self.shapeNumber = QSpinBox(self)
+        self.shapeNumber.setMaximum(numberOfShapes - 1)
+        self.shapeNumber.setMinimum(0)
+
+        max_value = 1000
+
+        self.scaleFactor = QSpinBox(self)
+        self.scaleFactor.setMaximum(max_value)
+        self.scaleFactor.setMinimum(-max_value)
+
+        buttonBox = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel, self)
+
+        layout = QFormLayout(self)
+        layout.addRow("shape number", self.shapeNumber)
+        layout.addRow("scale factor", self.scaleFactor)
+        layout.addWidget(buttonBox)
+
+        buttonBox.accepted.connect(self.accept)
+        buttonBox.rejected.connect(self.reject)
+
+    def getInputs(self) -> tuple[int, int, int]:
+        return (self.shapeNumber.value(), self.scaleFactor.value())
+
+def scale(shapes: list[Shape], command_stack: CommandStack) -> None:
+    if(len(shapes) == 0):
+        return
+
+    dialog = ScaleShapeDialog(shapes.__len__())
+    if dialog.exec():
+        number = dialog.getInputs()[0]
+        scale_factor = dialog.getInputs()[1]
+
+        shape = shapes[number]
+        command = ScaleShapeCommand(shape, scale_factor)
+        command_stack.execute(command)
 
 class ClearShapeDialog(QDialog):
 
@@ -253,6 +292,7 @@ class ActionFactory:
             self.dialogs["Rectangle"] = create_rectangle
             self.dialogs["Square"] = create_square
             self.dialogs["Translate"] = translate
+            self.dialogs["Scale"] = scale
             self.dialogs["Clear"] = clear
-            # TODO: Task 2 & 4: add the rectangle and scale dialogs to the dictionary of this factory class
+            # TODO: Task 2 & 4: add the rectangle and scale dialogs to the dictionary of this factory 
             return self.dialogs 

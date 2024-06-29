@@ -21,3 +21,6 @@ class Shape(ABC):
     def translate(self, dx: int, dy: int) -> None:
         self._center.translate(dx, dy)
 
+    def scale(self, scale_factor: float) -> None :
+        raise NotImplementedError
+

@@ -18,4 +18,6 @@ class Rectangle(Shape):
         painter.drawRect(rect)
 
         painter.drawText(self._center.x, self._center.y, str(self._id))
-
+    def scale(self, scale_factor: float) -> None:
+        self._width *= scale_factor
+        self._height *= scale_factor
